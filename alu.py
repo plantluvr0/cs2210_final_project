@@ -134,19 +134,32 @@ class Alu:
         """
         SUB
         """
-        pass  # replace pass with correct implementation
+        a = a & WORD_MASK
+        b = b & WORD_MASK
+        btwo = ((~b) + 1) & WORD_MASK
+        result = (a + btwo) & WORD_MASK
+        self._update_arith_flags_add(a, b, result)
+        return result
 
     def _and(self, a, b):
         """
         Bitwise AND
         """
-        pass  # replace pass with correct implementation
+        a = a & WORD_MASK
+        b = b & WORD_MASK
+        result = a & b
+        self._update_arith_flags_add(result)
+        return result
 
     def _or(self, a, b):
         """
         Bitwise OR
         """
-        pass  # replace pass with correct implementation
+        a = a & WORD_MASK
+        b = b & WORD_MASK
+        result = (a | b)
+        self._update_arith_flags_add(result)
+        return result
 
     def _shft(self, a, b):
         """
@@ -159,9 +172,15 @@ class Alu:
         """
         a &= WORD_MASK  # Keep this line as is
 
-        # Replace these two lines with a complete implementation
         result = 0
         bit_out = 0
+
+        if b > 0:
+            bit_out = (a >> (WORD_SIZE - b)) & ((1 << b) - 1)
+            result = (a << b) & WORD_MASK
+        elif  b < 0:
+            bit_out = a & ((1 << b) - 1)
+            result = a >> b
 
         # Keep these last two lines as they are
         self._update_shift_flags(result, bit_out)
