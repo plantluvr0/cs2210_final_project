@@ -136,8 +136,8 @@ class Alu:
         """
         a = a & WORD_MASK
         b = b & WORD_MASK
-        btwo = ((~b) + 1) & WORD_MASK
-        result = (a + btwo) & WORD_MASK
+        b = ((~b) + 1) & WORD_MASK
+        result = (a + b) & WORD_MASK
         self._update_arith_flags_add(a, b, result)
         return result
 
@@ -171,16 +171,16 @@ class Alu:
         last bit shifted out. This is used to set the carry flag.
         """
         a &= WORD_MASK  # Keep this line as is
-
-        result = 0
-        bit_out = 0
-
+        b = b & WORD_MASK
         if b > 0:
             bit_out = (a >> (WORD_SIZE - b)) & ((1 << b) - 1)
             result = (a << b) & WORD_MASK
         elif  b < 0:
             bit_out = a & ((1 << b) - 1)
             result = a >> b
+        elif b == 0:
+            bit_out = 0
+            result = a
 
         # Keep these last two lines as they are
         self._update_shift_flags(result, bit_out)
