@@ -1,4 +1,5 @@
 """
+ej & faris productions
 Starter code for Catamount Processor Unit ALU
 
 We are limited to 16 bits, and five operations: ADD, SUB, AND, OR, and SHFT.
@@ -170,15 +171,15 @@ class Alu:
         Keep in mind when we shift we need to keep track of the
         last bit shifted out. This is used to set the carry flag.
         """
-        a &= WORD_MASK  # Keep this line as is
-        b = b & WORD_MASK
+        a &= WORD_MASK  # Keep this line as is 
+        
         if b > 0:
-            bit_out = (a >> (WORD_SIZE - b)) & ((1 << b) - 1)
+            bit_out = (a >> abs(WORD_SIZE - b)) & 1
             result = (a << b) & WORD_MASK
-        elif  b < 0:
-            bit_out = a & ((1 << b) - 1)
-            result = a >> b
-        elif b == 0:
+        elif b < 0:
+            bit_out = (a >> abs(WORD_SIZE - b)) & 1
+            result = (a >> b) & WORD_MASK
+        elif b == 0 or b & WORD_MASK == 0:  
             bit_out = 0
             result = a
 
