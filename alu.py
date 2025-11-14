@@ -172,15 +172,28 @@ class Alu:
         last bit shifted out. This is used to set the carry flag.
         """
         a &= WORD_MASK  # Keep this line as is 
+        b &= WORD_MASK
+        s_b = self._to_signed(b)
+        shift_amt = b & (WORD_SIZE -1)
         
-        if b > 0:
-            bit_out = (a >> abs(WORD_SIZE - b)) & 1
-            result = (a << b) & WORD_MASK
-        elif b < 0:
-            bit_out = (a >> abs(WORD_SIZE - b)) & 1
-            result = (a >> b) & WORD_MASK
-        elif b == 0 or b & WORD_MASK == 0:  
-            bit_out = 0
+        if s_b > 0:
+            if shift_amt == 0:
+                result = a
+                bit_out = None
+            else:
+                result = (a<<shift_amt) & WORD_MASK
+                bit_out = (a >> (WORD_SIZE - shift_amt)) & 1
+            
+        elif s_b < 0:
+            if shift_amt == 0:
+                result = a
+                bit_out = None
+            else:
+                result = (a >> shift_amt) & WORD_MASK
+                bit_out = (a>> (shift_amt -1)) & 1
+            
+        else:  
+            bit_out = None
             result = a
 
         # Keep these last two lines as they are
@@ -250,13 +263,12 @@ class Alu:
         if bit_out:
             self._flags |= C_FLAG
 
-
-def set_op(self, op):
-    """
-    Public-facing setter. Added 2025-11-09. Students will need to add this
-    to their ALU implementation.
-    """
-    if op in self._ops.keys():
-        self._op = op
-    else:
-        raise ValueError(f"Bad op: {op}")
+    def set_op(self, op):
+        """
+        Public-facing setter. Added 2025-11-09. Students will need to add this
+        to their ALU implementation.
+        """
+        if op in self._ops.keys():
+            self._op = op
+        else:
+            raise ValueError(f"Bad op: {op}")
