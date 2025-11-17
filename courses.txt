@@ -1,0 +1,6 @@
+classes:
+adv prog cs2300a __WIL2__ -- open
+Alg design and analysis cs3240a --closed
+Computer Architecture -- open
+Secure distributed Computation cs 3120a --
+credits needed:D1, __WIL2/OC__ GC1/GC2 
