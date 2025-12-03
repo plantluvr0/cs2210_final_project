@@ -100,7 +100,7 @@ class Cpu:
                     offset = self._decoded.imm
                     addr = self._regs.execute(ra=rb)[0] + offset
                     data = self._regs.execute(ra=ra)[0]
-                    self._d_mem.write(addr, data, write_enable=True)
+                    self._d_mem.write(addr, data)
                 case "ADDI":
                     rd = self._decoded.rd
                     ra = self._decoded.ra
@@ -159,6 +159,7 @@ class Cpu:
                         self._pc += self.sext(offset, 8)
                         
                 case "B":
+                    offset = self._decoded.imm
                     offset += self.sext(offset, 8)
                     self._pc = self._decoded.imm  # jump to target
                 case "CALL":
