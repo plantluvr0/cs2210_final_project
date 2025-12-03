@@ -88,12 +88,10 @@ class Cpu:
                     data = upper | lower
                     self._regs.execute(rd=rd, data=data, write_enable=True)
                 case "LOAD":
-                    rd = self._decoded.rd
-                    ra = self._decoded.ra
-                    offset = self._decoded.imm
-                    addr = self._regs.execute(ra=ra)[0] + offset
-                    data = self._d_mem.read(addr)
-                    self._regs.execute(rd=rd, data=data, write_enable=True)
+                    base , _ = self._regs.execute(ra=self._decoded.ra)
+                    offset = self.sext(self._decoded.addr)
+                    data = self._d_mem.read(base + offset)
+                    self._regs.execute(rd=self._decoded.rd, data=data, write_enable=True)
                 case "STORE":
                     ra = self._decoded.ra
                     rb = self._decoded.rb
@@ -151,17 +149,18 @@ class Cpu:
                     self._regs.execute(rd=rd, data=result, write_enable=True)
                 case "BEQ":
                     if self._alu.zero:
-                        offset = self._decoded.imm
-                        self._pc += self.sext(offset, 8)
+                        offset = self.sext(self._decoded.imm, 8)
+                        self._pc += offset
+                        
                 case "BNE":
                     if not self._alu.zero:
-                        offset = self._decoded.imm
-                        self._pc += self.sext(offset, 8)
+                        offset = self.sext(self._decoded.imm, 8)
+                        self._pc += offset
+                        
                         
                 case "B":
-                    offset = self._decoded.imm
-                    offset += self.sext(offset, 8)
-                    self._pc = self._decoded.imm  # jump to target
+                    offset += self.sext(self._decoded.imm, 8)
+                    self._pc += offset # jump to target
                 case "CALL":
                     self._sp -= 1  # grow stack downward
                     # PC is incremented immediately upon fetch so already
